@@ -17,7 +17,6 @@ import { AttributeState } from '../context/attributestate'
 export class Use extends GraphicsNode {
   protected async renderCore(context: Context): Promise<void> {
     const pf = parseFloat
-
     const url = this.element.getAttribute('href') || this.element.getAttribute('xlink:href')
     // just in case someone has the idea to use empty use-tags, wtf???
     if (!url) return

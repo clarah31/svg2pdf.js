@@ -64,12 +64,12 @@ export async function svg2pdf(
   return pdf
 }
 
-jsPDF.API.svg = function(
-  element: Element,
-  options: Svg2PdfOptions = {}
-): ReturnType<typeof svg2pdf> {
-  return svg2pdf(element, this, options)
-}
+// jsPDF.API.svg = function(
+//   element: Element,
+//   options: Svg2PdfOptions = {}
+// ): ReturnType<typeof svg2pdf> {
+//   return svg2pdf(element, this, options)
+// }
 
 export interface Svg2PdfOptions {
   x?: number

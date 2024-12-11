@@ -48,6 +48,7 @@ export abstract class GeometryNode extends GraphicsNode {
 
   protected async fillOrStroke(context: Context): Promise<void> {
     if (context.withinClipPath) {
+      
       return
     }
     const fill = context.attributeState.fill

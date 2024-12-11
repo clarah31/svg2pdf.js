@@ -2,7 +2,7 @@ import { Context } from './context/context'
 import { getAttribute, nodeIs } from './utils/node'
 import { toPixels } from './utils/misc'
 import { parseColor, parseFloats } from './utils/parsing'
-import FontFamily from 'font-family-papandreou'
+//import FontFamily from 'font-family-papandreou'
 import { SvgNode } from './nodes/svgnode'
 import {
   combineFontStyleAndFontWeight,
@@ -117,12 +117,14 @@ export function parseAttributes(context: Context, svgNode: SvgNode, node?: Eleme
 
   const fontFamily = getAttribute(domNode, context.styleSheets, 'font-family')
   if (fontFamily) {
-    const fontFamilies = FontFamily.parse(fontFamily)
-    context.attributeState.fontFamily = findFirstAvailableFontFamily(
-      context.attributeState,
-      fontFamilies,
-      context
-    )
+    // AUIT
+    console.log("getAttribute... fontFamily",fontFamily)
+     const fontFamilies = [ fontFamily ];//FontFamily.parse(fontFamily)
+     context.attributeState.fontFamily = findFirstAvailableFontFamily(
+       context.attributeState,
+       fontFamilies,
+       context
+     )
   }
 
   const fontSize = getAttribute(domNode, context.styleSheets, 'font-size')

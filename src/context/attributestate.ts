@@ -72,7 +72,7 @@ export class AttributeState {
     attributeState.fill = new ColorFill(new RGBColor('rgb(0, 0, 0)'))
     attributeState.fillOpacity = 1.0
     // attributeState.fillRule = "nonzero";
-    attributeState.fontFamily = 'times'
+    attributeState.fontFamily = 'Inter' // AUIT
     attributeState.fontSize = 16
     attributeState.fontStyle = 'normal'
     // attributeState.fontVariant = "normal";

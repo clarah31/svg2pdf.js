@@ -1,17 +1,18 @@
 import { Context } from './context/context'
-import { getAttribute, nodeIs } from './utils/node'
 import { toPixels } from './utils/misc'
+import { getAttribute, nodeIs } from './utils/node'
 import { parseColor, parseFloats } from './utils/parsing'
 //import FontFamily from 'font-family-papandreou'
+import { GState } from 'jspdf'
+import { MKITFPdf } from 'ui/app/components/PdfBuilder/jspdf/MKITFPdf'
+import { ColorFill } from './fill/ColorFill'
+import { parseFill } from './fill/parseFill'
 import { SvgNode } from './nodes/svgnode'
 import {
   combineFontStyleAndFontWeight,
   findFirstAvailableFontFamily,
   fontAliases
 } from './utils/fonts'
-import { parseFill } from './fill/parseFill'
-import { ColorFill } from './fill/ColorFill'
-import { GState } from 'jspdf'
 import { RGBColor } from './utils/rgbcolor'
 
 export function parseAttributes(context: Context, svgNode: SvgNode, node?: Element): void {
@@ -117,14 +118,12 @@ export function parseAttributes(context: Context, svgNode: SvgNode, node?: Eleme
 
   const fontFamily = getAttribute(domNode, context.styleSheets, 'font-family')
   if (fontFamily) {
-    // AUIT
-    console.log("getAttribute... fontFamily",fontFamily)
-     const fontFamilies = [ fontFamily ];//FontFamily.parse(fontFamily)
-     context.attributeState.fontFamily = findFirstAvailableFontFamily(
-       context.attributeState,
-       fontFamilies,
-       context
-     )
+    const fontFamilies = [fontFamily];//FontFamily.parse(fontFamily) AUIT
+    context.attributeState.fontFamily = findFirstAvailableFontFamily(
+      context.attributeState,
+      fontFamilies,
+      context
+    )
   }
 
   const fontSize = getAttribute(domNode, context.styleSheets, 'font-size')
@@ -302,16 +301,20 @@ export function applyAttributes(
     )
   }
 
-  if (font !== undefined || fontStyle !== undefined) {
-    if (font === undefined) {
-      if (fontAliases.hasOwnProperty(childContext.attributeState.fontFamily)) {
-        font = fontAliases[childContext.attributeState.fontFamily]
-      } else {
-        font = childContext.attributeState.fontFamily
+    if (font !== undefined || fontStyle !== undefined) {
+      if (font === undefined) {
+        if (fontAliases.hasOwnProperty(childContext.attributeState.fontFamily)) {
+          font = fontAliases[childContext.attributeState.fontFamily]
+        } else {
+          font = childContext.attributeState.fontFamily
+        }
       }
+      // AUIT    
+      // @ts-ignore
+      const mkitPdf:MKITFPdf=  childContext.pdf.__MKITFPdf;
+      mkitPdf.setFontFromContext(font,fontStyle,childContext,node)    
+//      childContext.pdf.setFont(font, fontStyle)
     }
-    childContext.pdf.setFont(font, fontStyle)
-  }
 
   if (childContext.attributeState.fontSize !== parentContext.attributeState.fontSize) {
     // correct for a jsPDF-instance measurement unit that differs from `pt`
@@ -417,19 +420,22 @@ export function applyContext(context: Context): void {
   if (fontStyle === '') {
     fontStyle = 'normal'
   }
-
-  if (font !== undefined || fontStyle !== undefined) {
-    if (font === undefined) {
-      if (fontAliases.hasOwnProperty(attributeState.fontFamily)) {
-        font = fontAliases[attributeState.fontFamily]
-      } else {
-        font = attributeState.fontFamily
-      }
-    }
-    pdf.setFont(font, fontStyle)
-  } else {
-    pdf.setFont('helvetica', fontStyle)
-  }
+  // @ts-ignore
+  const mkitPdf:MKITFPdf=  this.doc.__MKITFPdf;
+  mkitPdf.setFont(font,fontStyle)
+  // AUIT
+  // if (font !== undefined || fontStyle !== undefined) {
+  //   if (font === undefined) {
+  //     if (fontAliases.hasOwnProperty(attributeState.fontFamily)) {
+  //       font = fontAliases[attributeState.fontFamily]
+  //     } else {
+  //       font = attributeState.fontFamily
+  //     }
+  //   }
+  //   pdf.setFont(font, fontStyle)
+  // } else {
+  //   pdf.setFont('helvetica', fontStyle)
+  // }
 
   // correct for a jsPDF-instance measurement unit that differs from `pt`
   pdf.setFontSize(attributeState.fontSize * pdf.internal.scaleFactor)

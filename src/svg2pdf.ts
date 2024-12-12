@@ -48,6 +48,7 @@ export async function svg2pdf(
   pdf.setLineWidth(context.attributeState.strokeWidth)
   const fill = (context.attributeState.fill as ColorFill).color
   pdf.setFillColor(fill.r, fill.g, fill.b)
+  
   pdf.setFont(context.attributeState.fontFamily)
   // correct for a jsPDF-instance measurement unit that differs from `pt`
   pdf.setFontSize(context.attributeState.fontSize * pdf.internal.scaleFactor)

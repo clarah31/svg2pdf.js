@@ -3,6 +3,7 @@
  * @param {string[]} fontFamilies
  * @return {string}
  */
+import { MKITFPdf } from 'ui/app/components/PdfBuilder/jspdf/MKITFPdf'
 import { AttributeState } from '../context/attributestate'
 import { Context } from '../context/context'
 import { jsPDF } from 'jspdf'
@@ -32,7 +33,10 @@ export function findFirstAvailableFontFamily(
     attributeState.fontStyle,
     attributeState.fontWeight
   )
-
+  //@ts-ignore
+  const mkitPDF:MKITFPdf = context.pdf.__MKITFPdf; 
+  if (mkitPDF)
+    return mkitPDF.findFirstAvailableFontFamily(attributeState,fontFamilies,context,fontType);
   const availableFonts = context.pdf.getFontList()
   let firstAvailable = ''
   const fontIsAvailable = fontFamilies.some(font => {

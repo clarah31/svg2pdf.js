@@ -24,7 +24,7 @@ interface TrimInfo {
 }
 
 export class TextNode extends GraphicsNode {
-  private processTSpans(
+  protected processTSpans( //AUIT
     textNode: SvgNode,
     node: Element,
     context: Context,

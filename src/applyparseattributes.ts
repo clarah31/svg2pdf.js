@@ -311,9 +311,9 @@ export function applyAttributes(
       }
       // AUIT    
       // @ts-ignore
-      const mkitPdf:MKITFPdf=  childContext.pdf.__MKITFPdf;
-      mkitPdf.setFontFromContext(font,fontStyle,childContext,node)    
-//      childContext.pdf.setFont(font, fontStyle)
+      // const mkitPdf:MKITFPdf=  childContext.pdf.__MKITFPdf;
+      // mkitPdf.setFontFromContext(font,fontStyle,childContext,node)    
+      childContext.pdf.setFont(font, fontStyle)
     }
 
   if (childContext.attributeState.fontSize !== parentContext.attributeState.fontSize) {
@@ -421,21 +421,21 @@ export function applyContext(context: Context): void {
     fontStyle = 'normal'
   }
   // @ts-ignore
-  const mkitPdf:MKITFPdf=  this.doc.__MKITFPdf;
-  mkitPdf.setFont(font,fontStyle)
+  // const mkitPdf:MKITFPdf=  this.doc.__MKITFPdf;
+  // mkitPdf.setFont(font,fontStyle)
   // AUIT
-  // if (font !== undefined || fontStyle !== undefined) {
-  //   if (font === undefined) {
-  //     if (fontAliases.hasOwnProperty(attributeState.fontFamily)) {
-  //       font = fontAliases[attributeState.fontFamily]
-  //     } else {
-  //       font = attributeState.fontFamily
-  //     }
-  //   }
-  //   pdf.setFont(font, fontStyle)
-  // } else {
-  //   pdf.setFont('helvetica', fontStyle)
-  // }
+  if (font !== undefined || fontStyle !== undefined) {
+    if (font === undefined) {
+      if (fontAliases.hasOwnProperty(attributeState.fontFamily)) {
+        font = fontAliases[attributeState.fontFamily]
+      } else {
+        font = attributeState.fontFamily
+      }
+    }
+    pdf.setFont(font, fontStyle)
+  } else {
+    pdf.setFont('helvetica', fontStyle)
+  }
 
   // correct for a jsPDF-instance measurement unit that differs from `pt`
   pdf.setFontSize(attributeState.fontSize * pdf.internal.scaleFactor)

@@ -34,9 +34,9 @@ export function findFirstAvailableFontFamily(
     attributeState.fontWeight
   )
   //@ts-ignore
-  const mkitPDF:MKITFPdf = context.pdf.__MKITFPdf; 
-  if (mkitPDF)
-    return mkitPDF.findFirstAvailableFontFamily(attributeState,fontFamilies,context,fontType);
+//  const mkitPDF:MKITFPdf = context.pdf.__MKITFPdf; 
+  // if (mkitPDF)
+  //   return mkitPDF.findFirstAvailableFontFamily(attributeState,fontFamilies,context,fontType);
   const availableFonts = context.pdf.getFontList()
   let firstAvailable = ''
   const fontIsAvailable = fontFamilies.some(font => {

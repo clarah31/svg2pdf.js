@@ -313,7 +313,7 @@ export function applyAttributes(
       // @ts-ignore
       // const mkitPdf:MKITFPdf=  childContext.pdf.__MKITFPdf;
       // mkitPdf.setFontFromContext(font,fontStyle,childContext,node)    
-      childContext.pdf.setFont(font, fontStyle)
+      // childContext.pdf.setFont(font, fontStyle)
     }
 
   if (childContext.attributeState.fontSize !== parentContext.attributeState.fontSize) {

@@ -20,7 +20,7 @@ import { Group } from './nodes/group'
 import cssesc from 'cssesc'
 import { ClipPath } from './nodes/clippath'
 import { Symbol } from './nodes/symbol'
-import { MKitTextNode } from 'ui/app/components/PdfBuilder/jspdf/TextNode'
+import { MKitTextNode } from 'extern/jsPDF/TextNode'
 
 export function parse(node: Element, idMap?: { [id: string]: SvgNode }): SvgNode {
   let svgnode: SvgNode

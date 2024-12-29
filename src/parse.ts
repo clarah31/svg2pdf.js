@@ -20,10 +20,10 @@ import { Group } from './nodes/group'
 import cssesc from 'cssesc'
 import { ClipPath } from './nodes/clippath'
 import { Symbol } from './nodes/symbol'
-import { MKitTextNode } from 'extern/jsPDF/TextNode'
+//import { MKitTextNode } from 'extern/jsPDF/TextNode'
 
 export function parse(node: Element, idMap?: { [id: string]: SvgNode }): SvgNode {
-  let svgnode: SvgNode
+  let svgnode: SvgNode;
   const children: SvgNode[] = []
 
   forEachChild(node, (i, n) => children.push(parse(n, idMap)))
@@ -79,8 +79,10 @@ export function parse(node: Element, idMap?: { [id: string]: SvgNode }): SvgNode
       svgnode = new Symbol(node, children)
       break
     case 'text':
-      //svgnode = new TextNode(node, children)
-      svgnode = new MKitTextNode(node, children)
+      svgnode = new TextNode(node, children)
+      debugger
+      //    svgnode = new MKitTextNode(node, children)
+      
       break
     case 'use':
       svgnode = new Use(node, children)
@@ -89,7 +91,6 @@ export function parse(node: Element, idMap?: { [id: string]: SvgNode }): SvgNode
       svgnode = new VoidNode(node, children)
       break
   }
-
   if (idMap != undefined && svgnode.element.hasAttribute('id')) {
     const id = cssesc(svgnode.element.id, { isIdentifier: true })
     idMap[id] = idMap[id] || svgnode

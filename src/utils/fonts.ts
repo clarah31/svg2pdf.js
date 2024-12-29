@@ -3,7 +3,7 @@
  * @param {string[]} fontFamilies
  * @return {string}
  */
-import { MKITFPdf } from 'ui/app/components/PdfBuilder/jspdf/MKITFPdf'
+//import { MKITFPdf } from 'ui/app/components/PdfBuilder/jspdf/MKITFPdf'
 import { AttributeState } from '../context/attributestate'
 import { Context } from '../context/context'
 import { jsPDF } from 'jspdf'
@@ -63,6 +63,7 @@ export function findFirstAvailableFontFamily(
 }
 
 const isJsPDF23: boolean = (() => {
+  return true;
   const parts = jsPDF.version.split('.')
   return parseFloat(parts[0]) === 2 && parseFloat(parts[1]) === 3
 })()

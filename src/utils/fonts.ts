@@ -56,7 +56,7 @@ export function findFirstAvailableFontFamily(
   })
 
   if (!fontIsAvailable) {
-    firstAvailable = 'times'
+    firstAvailable = 'Inter'
   }
 
   return firstAvailable

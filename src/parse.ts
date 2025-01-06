@@ -20,6 +20,7 @@ import { Group } from './nodes/group'
 import cssesc from 'cssesc'
 import { ClipPath } from './nodes/clippath'
 import { Symbol } from './nodes/symbol'
+import { MKitTextNode } from 'ui/app/components/PdfBuilder/jsPDF/TextNode'
 //import { MKitTextNode } from 'extern/jsPDF/TextNode'
 
 export function parse(node: Element, idMap?: { [id: string]: SvgNode }): SvgNode {
@@ -79,9 +80,9 @@ export function parse(node: Element, idMap?: { [id: string]: SvgNode }): SvgNode
       svgnode = new Symbol(node, children)
       break
     case 'text':
-      svgnode = new TextNode(node, children)
-      debugger
-      //    svgnode = new MKitTextNode(node, children)
+      //svgnode = new TextNode(node, children)
+      //debugger
+          svgnode = new MKitTextNode(node, children)
       
       break
     case 'use':

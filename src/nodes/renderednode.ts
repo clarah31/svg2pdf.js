@@ -9,7 +9,20 @@ export abstract class RenderedNode extends SvgNode {
     if (!this.isVisible(parentContext.attributeState.visibility !== 'hidden', parentContext)) {
       return
     }
-
+  // MKITJsPDF
+    let p = this.element.parentElement;
+    if ( this.element.nodeName!=='text' && this.element.nodeName!=='g'){
+      while ( p ){
+        const hbg=p.getAttribute('hasBGImage');
+        if ( hbg && hbg === "1"){
+          return;
+        }
+        if ( p.nodeName ==='g' )
+          break;
+        p = p.parentElement;
+      }
+  
+    }
     const context = parentContext.clone()
     context.transform = context.pdf.matrixMult(
       this.computeNodeTransform(context),

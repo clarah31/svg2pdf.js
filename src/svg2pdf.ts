@@ -1,12 +1,12 @@
-import { SvgNode } from './nodes/svgnode'
+import { jsPDF } from 'jspdf'
 import { Context } from './context/context'
 import { ReferencesHandler } from './context/referenceshandler'
-import { parse } from './parse'
-import { ColorFill } from './fill/ColorFill'
-import { jsPDF } from 'jspdf'
 import { StyleSheets } from './context/stylesheets'
-import { Viewport } from './context/viewport'
 import { TextMeasure } from './context/textmeasure'
+import { Viewport } from './context/viewport'
+import { ColorFill } from './fill/ColorFill'
+import { SvgNode } from './nodes/svgnode'
+import { parse } from './parse'
 
 export async function svg2pdf(
   element: Element,

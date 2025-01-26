@@ -209,10 +209,11 @@ export function applyAttributes(
   }
 
   if (hasFillOpacity || hasStrokeOpacity) {
-    const gState: GState = {}
-    hasFillOpacity && (gState['opacity'] = fillOpacity)
-    hasStrokeOpacity && (gState['stroke-opacity'] = strokeOpacity)
-    childContext.pdf.setGState(new GState(gState))
+    //AUIT
+    // const gState: GState = {}
+    // hasFillOpacity && (gState['opacity'] = fillOpacity)
+    // hasStrokeOpacity && (gState['stroke-opacity'] = strokeOpacity)
+    // childContext.pdf.setGState(new GState(gState))
   }
 
   if (
@@ -348,10 +349,11 @@ export function applyContext(context: Context): void {
     strokeOpacity *= attributeState.stroke.color.a
   }
 
-  const gState: GState = {}
-  gState['opacity'] = fillOpacity
-  gState['stroke-opacity'] = strokeOpacity
-  pdf.setGState(new GState(gState))
+  // AUIT
+  // const gState: GState = {}
+  // gState['opacity'] = fillOpacity
+  // gState['stroke-opacity'] = strokeOpacity
+  // pdf.setGState(new GState(gState))
 
   if (
     attributeState.fill &&

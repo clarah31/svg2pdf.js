@@ -46,10 +46,27 @@ export abstract class Gradient extends NonRenderedNode {
       gState = new GState({ opacity: opacitySum / colors.length })
     }
 
-    const pattern = new ShadingPattern(this.pdfGradientType, this.getCoordinates(), colors, gState)
-    context.pdf.addShadingPattern(id, pattern)
+   //  const pattern = new ShadingPattern(this.pdfGradientType, this.getCoordinates(), colors, gState)
+    // context.pdf.addShadingPattern(id, pattern)
+    console.log(colors)
+//AUIT
+debugger
+const colors2: StopData[] =[
+  {
+    offset: 0,
+    color: [255, 160, 169], //RGB as an array
+    opacity: 0
+ },
+ {
+    offset: 1,
+    color: [76, 160, 255],
+    opacity: 0.5
   }
-
+]
+  const gstate = new GState({opacity: 0.75});
+  const pattern2 = new ShadingPattern(this.pdfGradientType, this.getCoordinates(),colors2,gstate)
+  context.pdf.addShadingPattern(id, pattern2)
+  }
   abstract getCoordinates(): number[]
 
   public getStops(styleSheets: StyleSheets): StopData[] {

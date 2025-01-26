@@ -1,5 +1,5 @@
 import { Matrix } from 'jspdf'
-import { MKITjsPdf } from 'ui/app/components/PdfBuilder/jsPDF/MKITjsPdf'
+//import { MKITjsPdf } from 'ui/app/components/PdfBuilder/jsPDF/MKITjsPdf'
 import { Context } from '../context/context'
 import { Rect } from '../utils/geometry'
 import { getAttribute } from '../utils/node'

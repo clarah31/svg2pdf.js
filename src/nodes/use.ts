@@ -103,7 +103,7 @@ export class Use extends GraphicsNode {
     // So, make the bBox a lot larger than it needs to be and hope any thick strokes are
     // still within.
     bBox = [bBox[0] - 0.5 * bBox[2], bBox[1] - 0.5 * bBox[3], bBox[2] * 2, bBox[3] * 2]
-
+debugger
     refContext.pdf.beginFormObject(bBox[0], bBox[1], bBox[2], bBox[3], refContext.pdf.unitMatrix)
     if (node instanceof Symbol) {
       await node.apply(refContext)

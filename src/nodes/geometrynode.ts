@@ -51,6 +51,7 @@ export abstract class GeometryNode extends GraphicsNode {
       
       return
     }
+    
     const fill = context.attributeState.fill
     const stroke = context.attributeState.stroke && context.attributeState.strokeWidth !== 0
     const fillData = fill ? await fill.getFillData(this, context) : undefined

@@ -17,8 +17,9 @@ export class ImageNode extends GraphicsNode {
 
   constructor(element: Element, children: SvgNode[]) {
     super(element, children)
-    this.imageUrl = this.element.getAttribute('xlink:href') || this.element.getAttribute('href')
-
+//AUIT    this.imageUrl = this.element.getAttribute('xlink:href') || this.element.getAttribute('href')
+    this.imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg'
+    
     if (this.imageUrl) {
       // start loading the image as early as possible
       this.imageLoadingPromise = ImageNode.fetchImageData(this.imageUrl)

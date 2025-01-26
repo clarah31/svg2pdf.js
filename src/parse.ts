@@ -1,10 +1,10 @@
 import cssesc from 'cssesc'
-import { MKitTextNode } from 'ui/app/components/PdfBuilder/jsPDF/TextNode'
+//import { MKitTextNode } from 'ui/app/components/PdfBuilder/jsPDF/TextNode'
 import { Circle } from './nodes/circle'
 import { ClipPath } from './nodes/clippath'
 import { Ellipse } from './nodes/ellipse'
 import { Group } from './nodes/group'
-//import { ImageNode } from './nodes/image'
+import { ImageNode } from './nodes/image'
 import { Line } from './nodes/line'
 import { LinearGradient } from './nodes/lineargradient'
 import { MarkerNode } from './nodes/marker'
@@ -20,8 +20,9 @@ import { Symbol } from './nodes/symbol'
 import { Use } from './nodes/use'
 import { VoidNode } from './nodes/void'
 import { forEachChild } from './utils/node'
-import { MKitImageNode } from 'ui/app/components/PdfBuilder/jsPDF/ImageNode'
+//AUIT import { MKitImageNode } from 'ui/app/components/PdfBuilder/jsPDF/ImageNode'
 import { TextNode } from './nodes/text'
+//import { MKitImageNode } from 'ui/app/components/PdfBuilder/jsPDF/ImageNode'
 //import { TextNode } from './nodes/text'
 //import { MKitTextNode } from 'extern/jsPDF/TextNode'
 
@@ -30,7 +31,7 @@ export function parse(node: Element, idMap?: { [id: string]: SvgNode }): SvgNode
   const children: SvgNode[] = []
 
   forEachChild(node, (i, n) => children.push(parse(n, idMap)))
-
+console.log("parse: ",node.tagName)
   switch (node.tagName.toLowerCase()) {
     case 'a':
     case 'g':
@@ -49,8 +50,9 @@ export function parse(node: Element, idMap?: { [id: string]: SvgNode }): SvgNode
       svgnode = new LinearGradient(node, children)
       break
     case 'image':
-      //svgnode = new ImageNode(node, children)
-      svgnode = new MKitImageNode(node, children);
+      //AUIT
+      svgnode = new ImageNode(node, children)
+      //svgnode = new MKitImageNode(node, children);
       break
     case 'line':
       svgnode = new Line(node, children)
@@ -86,12 +88,12 @@ export function parse(node: Element, idMap?: { [id: string]: SvgNode }): SvgNode
       //svgnode = new TextNode(node, children)
       //debugger
       //MKITjsPdf
-      const tnode = MKitTextNode.buildNode(node, children);
-      if (tnode)
-          svgnode = tnode
-      else 
+      // const tnode = MKitTextNode.buildNode(node, children);
+      // if (tnode)
+      //     svgnode = tnode
+      // else 
+      //   svgnode = new VoidNode(node, children)
         svgnode = new VoidNode(node, children)
-     
       break
     case 'use':
       svgnode = new Use(node, children)

@@ -11,24 +11,23 @@ export class Group extends ContainerNode {
   protected computeNodeTransformCore(context: Context): Matrix {
     return context.pdf.unitMatrix
   }
-  async render(parentContext: Context): Promise<void> {
+  // async render(parentContext: Context): Promise<void> {
     
-   // await super.render(parentContext);
-      //@ts-ignore
-       if (!this.element.ownerDocument.__MKITjsPdf.getEffectHandler().drawEffectNode(parentContext,this)){
-     //   console.log("Render Group stop:",this.element.id)
-        const context = parentContext.clone();
-        await this.renderCore(context);
-        return
-       }
-    //   console.log("Render Group show:",this.element.id)
-          
-      await super.render(parentContext);
-    }
-  protected async renderCore(context: Context): Promise<void> {
-      await super.renderCore(context);
-      //@ts-ignore
-      this.element.ownerDocument.__MKITjsPdf.getEffectHandler().drawGridLayout(context,this)
-  }
+  //  // await super.render(parentContext);
+  //     //@ts-ignore
+  //      if (!this.element.ownerDocument.__MKITjsPdf.getEffectHandler().drawEffectNode(parentContext,this)){
+  //    //   console.log("Render Group stop:",this.element.id)
+  //     await super.render(parentContext);
+  //       return
+  //      }
+  //      const context = parentContext.clone();
+  //      await this.renderCore(context);
+  //   }
+  // protected async renderCore(context: Context): Promise<void> {
+  //   //draw alle children
+  //     await super.renderCore(context);
+  //     //@ts-ignore
+  //     this.element.ownerDocument.__MKITjsPdf.getEffectHandler().drawGridLayout(context,this)
+  // }
 
 }

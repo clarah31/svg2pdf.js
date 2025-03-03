@@ -19,6 +19,7 @@ export class ClipPath extends NonRenderedNode {
       this.computeNodeTransform(context),
       context.transform
     )
+ 
 
     context.pdf.setCurrentTransformationMatrix(clipPathMatrix)
 
@@ -30,7 +31,8 @@ export class ClipPath extends NonRenderedNode {
           viewport: context.viewport,
           withinClipPath: true,
           svg2pdfParameters: context.svg2pdfParameters,
-          textMeasure: context.textMeasure
+          textMeasure: context.textMeasure,
+          patternData:context.patternData
         })
       )
     }

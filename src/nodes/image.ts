@@ -1,25 +1,27 @@
-import { SvgNode } from './svgnode'
+import { Matrix } from 'jspdf'
 import { Context } from '../context/context'
-import { defaultBoundingBox } from '../utils/bbox'
 import { ReferencesHandler } from '../context/referenceshandler'
+import { Viewport } from '../context/viewport'
 import { parse } from '../parse'
+import { defaultBoundingBox } from '../utils/bbox'
+import { Rect } from '../utils/geometry'
 import { getAttribute, svgNodeIsVisible } from '../utils/node'
 import { GraphicsNode } from './graphicsnode'
-import { Rect } from '../utils/geometry'
-import { Matrix } from 'jspdf'
-import { Viewport } from '../context/viewport'
+import { SvgNode } from './svgnode'
 
 // groups: 1: mime-type (+ charset), 2: mime-type (w/o charset), 3: charset, 4: base64?, 5: body
-export const dataUriRegex = /^\s*data:(([^/,;]+\/[^/,;]+)(?:;([^,;=]+=[^,;=]+))?)?(?:;(base64))?,((?:.|\s)*)$/i
+export const dataUriRegex =
+  /^\s*data:(([^/,;]+\/[^/,;]+)(?:;([^,;=]+=[^,;=]+))?)?(?:;(base64))?,((?:.|\s)*)$/i
 export class ImageNode extends GraphicsNode {
   private readonly imageLoadingPromise: Promise<{ data: string; format: string }> | null = null
   private readonly imageUrl: string | null
 
   constructor(element: Element, children: SvgNode[]) {
     super(element, children)
-//AUIT    this.imageUrl = this.element.getAttribute('xlink:href') || this.element.getAttribute('href')
-    this.imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg'
-    
+    this.imageUrl = this.element.getAttribute('xlink:href') || this.element.getAttribute('href')
+    // this.imageUrl = this.element.getAttribute('xlink:href') || this.element.getAttribute('href')
+    // this.imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/7/70/Example.png';
+    // this.imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg'
     if (this.imageUrl) {
       // start loading the image as early as possible
       this.imageLoadingPromise = ImageNode.fetchImageData(this.imageUrl)
@@ -70,16 +72,27 @@ export class ImageNode extends GraphicsNode {
           styleSheets: context.styleSheets,
           viewport: new Viewport(width, height),
           svg2pdfParameters: context.svg2pdfParameters,
-          textMeasure: context.textMeasure
+          textMeasure: context.textMeasure,
+          patternData: context.patternData,
         })
       )
       return
     } else {
       const dataUri = `data:image/${format};base64,${btoa(data)}`
       try {
-        context.pdf.addImage(
-          dataUri,
-          '', // will be ignored anyways if imageUrl is a data url
+        // AUIT
+        if (getAttribute(this.element, context.styleSheets, 'overflow') == 'hidden') {
+        }
+        await context.pdf.addImage(
+          {
+            id: '' + getAttribute(this.element, context.styleSheets, 'id'),
+            dataUri: dataUri,
+            aspectRatio: getAttribute(this.element, context.styleSheets, 'preserveAspectRatio'),
+            overflow: getAttribute(this.element, context.styleSheets, 'overflow'),
+            opacity: getAttribute(this.element, context.styleSheets, 'opacity'),
+            patternWidth: undefined,
+            patternHeight: undefined,
+          },
           x,
           y,
           width,
@@ -133,7 +146,7 @@ export class ImageNode extends GraphicsNode {
 
     return {
       data,
-      format
+      format,
     }
   }
 

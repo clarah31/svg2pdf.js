@@ -179,7 +179,7 @@ export class StyleSheets {
       if (priorityA !== priorityB) {
         return priorityA === 'important' ? 1 : -1
       }
-      console.log("s**************???? css")
+      
       //@ts-ignore
       return compareSpecificity(a.selectorText, b.selectorText)
     }

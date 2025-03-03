@@ -1,6 +1,7 @@
 import { SvgNode } from '../nodes/svgnode'
 import { Context } from '../context/context'
 import { StyleSheets } from '../context/stylesheets'
+import { MKITEffects } from 'PdfBuilder/jsPDF/MKITEffects'
 
 export function nodeIs(node: Element, tagsString: string): boolean {
   return tagsString.split(',').indexOf((node.nodeName || node.tagName).toLowerCase()) >= 0
@@ -25,19 +26,31 @@ export function getAttribute(
   propertyNode: string,
   propertyCss = propertyNode
 ): string | undefined {
-  const attribute = (node as SVGElement).style?.getPropertyValue(propertyCss)
-  if (attribute) {
-    return attribute
-  } else {
-    const propertyValue = styleSheets.getPropertyValue(node, propertyCss)
-    if (propertyValue) {
-      return propertyValue
-    } else if (node.hasAttribute(propertyNode)) {
-      return node.getAttribute(propertyNode) || undefined
-    } else {
-      return undefined
-    }
+  // AUIT
+  const propertyValue = styleSheets.getPropertyValue(node, propertyCss)
+  if (propertyValue) {
+    return propertyValue
+  } else if (node.hasAttribute(propertyNode)) {
+    return node.getAttribute(propertyNode) || undefined
   }
+    const attribute = (node as SVGElement).style?.getPropertyValue(propertyCss)
+    if (attribute) {
+      return attribute
+    } 
+      return undefined
+
+  // if (attribute) {
+  //   return attribute
+  // } else {
+  //   const propertyValue = styleSheets.getPropertyValue(node, propertyCss)
+  //   if (propertyValue) {
+  //     return propertyValue
+  //   } else if (node.hasAttribute(propertyNode)) {
+  //     return node.getAttribute(propertyNode) || undefined
+  //   } else {
+  //     return undefined
+  //   }
+  // }
 }
 
 export function svgNodeIsVisible(
@@ -55,7 +68,13 @@ export function svgNodeIsVisible(
   if (visibility) {
     visible = visibility !== 'hidden'
   }
-
+  // if (visible){
+  //   if ( MKITEffects.inEffectNode(context, svgNode.element) ){
+  //     console.log("Hide:",svgNode.element.id)
+  //     return false;
+  //   }
+      
+  // }
   return visible
 }
 

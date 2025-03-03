@@ -11,7 +11,7 @@ export class Line extends GeometryNode {
   }
 
   protected getPath(context: Context): Path | null {
-    if (context.withinClipPath || context.attributeState.stroke === null) {
+    if (context.withinClipPath || context.withinMaskPath ||context.attributeState.stroke === null) {
       return null
     }
 

@@ -6,6 +6,7 @@ import { computeViewBoxTransform } from '../utils/transform'
 import { NonRenderedNode } from './nonrenderednode'
 import { applyAttributes, parseAttributes } from '../applyparseattributes'
 import { applyClipPath, getClipPathNode } from '../utils/applyclippath'
+import { applyMaskPath, getMaskPathNode } from '../utils/applymaskpath'
 import { Matrix } from 'jspdf'
 
 export class Symbol extends NonRenderedNode {
@@ -27,6 +28,19 @@ export class Symbol extends NonRenderedNode {
       if (clipNode) {
         if (clipNode.isVisible(true, context)) {
           await applyClipPath(this, clipNode, context)
+        } else {
+          return
+        }
+      }
+    }
+    const maskPathAttribute = getAttribute(this.element, context.styleSheets, 'mask')
+    const hasMaskPath = maskPathAttribute && maskPathAttribute !== 'none'
+
+    if (hasMaskPath) {
+      const maskNode = getMaskPathNode(maskPathAttribute!, this, context)
+      if (maskNode) {
+        if (maskNode.isVisible(true, context)) {
+          await applyMaskPath(this, maskNode, context)
         } else {
           return
         }

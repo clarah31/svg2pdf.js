@@ -1,9 +1,9 @@
+import { Matrix, TilingPattern } from 'jspdf'
 import { Context } from '../context/context'
 import { defaultBoundingBox } from '../utils/bbox'
-import { NonRenderedNode } from './nonrenderednode'
-import { svgNodeAndChildrenVisible } from '../utils/node'
 import { Rect } from '../utils/geometry'
-import { Matrix, TilingPattern } from 'jspdf'
+import { svgNodeAndChildrenVisible } from '../utils/node'
+import { NonRenderedNode } from './nonrenderednode'
 
 export class Pattern extends NonRenderedNode {
   async apply(context: Context): Promise<void> {
@@ -20,7 +20,8 @@ export class Pattern extends NonRenderedNode {
       bBox[3]
     )
 
-    context.pdf.beginTilingPattern(pattern)
+    //AUIT patternData
+    context.pdf.beginTilingPattern(pattern,context.patternData)
     // continue without transformation
 
     for (const child of this.children) {
@@ -31,7 +32,8 @@ export class Pattern extends NonRenderedNode {
           styleSheets: context.styleSheets,
           viewport: context.viewport,
           svg2pdfParameters: context.svg2pdfParameters,
-          textMeasure: context.textMeasure
+          textMeasure: context.textMeasure,
+          patternData:context.patternData
         })
       )
     }

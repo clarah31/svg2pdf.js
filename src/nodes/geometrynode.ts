@@ -8,6 +8,7 @@ import { GraphicsNode } from './graphicsnode'
 import { SvgNode } from './svgnode'
 import { Rect } from '../utils/geometry'
 import { MarkerNode } from './marker'
+import { MKITEffects } from 'PdfBuilder/jsPDF/MKITEffects'
 
 export abstract class GeometryNode extends GraphicsNode {
   private readonly hasMarkers: boolean
@@ -19,11 +20,14 @@ export abstract class GeometryNode extends GraphicsNode {
   }
 
   protected async renderCore(context: Context): Promise<void> {
+    if ( MKITEffects.inEffectNode(context, this.element) ){
+      return;
+    }
     const path = this.getCachedPath(context)
     if (path === null || path.segments.length === 0) {
       return
     }
-    if (context.withinClipPath) {
+    if (context.withinClipPath||context.withinMaskPath) {
       path.transform(context.transform)
     } else {
       context.pdf.setCurrentTransformationMatrix(context.transform)
@@ -47,16 +51,22 @@ export abstract class GeometryNode extends GraphicsNode {
   }
 
   protected async fillOrStroke(context: Context): Promise<void> {
-    if (context.withinClipPath) {
+   // console.log('fillOrStroke inEffectNode...', this.element.parentElement?.id,this.element.id)
+    if ( MKITEffects.inEffectNode(context, this.element) ){
+     // console.log('fillOrStroke inEffectNode...', this.element.id)
+      return;
+    }
+
+    if (context.withinClipPath/* ||context.withinMaskPath */) {
       
       return
     }
-    
     const fill = context.attributeState.fill
     const stroke = context.attributeState.stroke && context.attributeState.strokeWidth !== 0
     const fillData = fill ? await fill.getFillData(this, context) : undefined
     const isNodeFillRuleEvenOdd = context.attributeState.fillRule === 'evenodd'
-
+    //AUIT
+    const strokeData = stroke && context.attributeState.stroke ? await context.attributeState.stroke.getFillData(this, context) : undefined
     // This is a workaround for symbols that are used multiple times with different
     // fill/stroke attributes. All paths within symbols are both filled and stroked
     // and we set the fill/stroke to transparent if the use element has
@@ -74,7 +84,7 @@ export abstract class GeometryNode extends GraphicsNode {
         context.pdf.fill(fillData)
       }
     } else if (stroke) {
-      context.pdf.stroke()
+      context.pdf.stroke(strokeData)
     } else {
       context.pdf.discardPath()
     }

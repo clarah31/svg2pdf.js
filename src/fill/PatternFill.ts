@@ -17,18 +17,18 @@ export class PatternFill implements Fill {
   }
 
   async getFillData(forNode: GraphicsNode, context: Context): Promise<FillData | undefined> {
-    await context.refsHandler.getRendered(this.key, null, node =>
-      (node as Pattern).apply(
-        new Context(context.pdf, {
-          refsHandler: context.refsHandler,
-          textMeasure: context.textMeasure,
-          styleSheets: context.styleSheets,
-          viewport: context.viewport,
-          svg2pdfParameters: context.svg2pdfParameters
-        })
-      )
-    )
-
+    // await context.refsHandler.getRendered(this.key, null, node =>
+    //   (node as Pattern).apply(
+    //     new Context(context.pdf, {
+    //       refsHandler: context.refsHandler,
+    //       textMeasure: context.textMeasure,
+    //       styleSheets: context.styleSheets,
+    //       viewport: context.viewport,
+    //       svg2pdfParameters: context.svg2pdfParameters
+    //     })
+    //   )
+    // )
+// AUIT Matrix erst berechnen dann rendern
     const patternData: PatternData = {
       key: this.key,
       boundingBox: undefined,
@@ -93,6 +93,19 @@ export class PatternFill implements Fill {
 
     patternData.matrix = matrix
 
+
+    await context.refsHandler.getRendered(this.key, null, node =>
+      (node as Pattern).apply(
+        new Context(context.pdf, {
+          refsHandler: context.refsHandler,
+          textMeasure: context.textMeasure,
+          styleSheets: context.styleSheets,
+          viewport: context.viewport,
+          svg2pdfParameters: context.svg2pdfParameters,
+          patternData:patternData
+        })
+      )
+    )    
     return patternData
   }
 }

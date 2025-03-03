@@ -1,4 +1,4 @@
-import { jsPDF } from 'jspdf'
+import { jsPDF, PatternData } from 'jspdf'
 import { Context } from './context/context'
 import { ReferencesHandler } from './context/referenceshandler'
 import { StyleSheets } from './context/stylesheets'
@@ -30,13 +30,14 @@ export async function svg2pdf(
   const svg2pdfParameters = { ...options, element }
 
   const textMeasure = new TextMeasure()
-
+  const patternData: PatternData = { key: '' }
   const context = new Context(pdf, {
     refsHandler,
     styleSheets,
     viewport,
     svg2pdfParameters,
-    textMeasure
+    textMeasure,
+    patternData,
   })
 
   pdf.advancedAPI()
@@ -48,10 +49,11 @@ export async function svg2pdf(
   pdf.setLineWidth(context.attributeState.strokeWidth)
   const fill = (context.attributeState.fill as ColorFill).color
   pdf.setFillColor(fill.r, fill.g, fill.b)
-  
-  pdf.setFont(context.attributeState.fontFamily)
-  // correct for a jsPDF-instance measurement unit that differs from `pt`
-  pdf.setFontSize(context.attributeState.fontSize * pdf.internal.scaleFactor)
+
+  // AUIT
+  // pdf.setFont(context.attributeState.fontFamily)
+  // // correct for a jsPDF-instance measurement unit that differs from `pt`
+  // pdf.setFontSize(context.attributeState.fontSize * pdf.internal.scaleFactor)
 
   const node = parse(element, idMap)
   await node.render(context)

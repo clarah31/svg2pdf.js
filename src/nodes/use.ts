@@ -68,7 +68,8 @@ export class Use extends GraphicsNode {
       viewport: refNodeOpensViewport ? new Viewport(width!, height!) : context.viewport,
       svg2pdfParameters: context.svg2pdfParameters,
       textMeasure: context.textMeasure,
-      attributeState: Object.assign(AttributeState.default(), contextColors)
+      attributeState: Object.assign(AttributeState.default(), contextColors),
+      patternData:context.patternData
     })
 
     await context.refsHandler.getRendered(id, contextColors, node =>
@@ -103,7 +104,7 @@ export class Use extends GraphicsNode {
     // So, make the bBox a lot larger than it needs to be and hope any thick strokes are
     // still within.
     bBox = [bBox[0] - 0.5 * bBox[2], bBox[1] - 0.5 * bBox[3], bBox[2] * 2, bBox[3] * 2]
-debugger
+
     refContext.pdf.beginFormObject(bBox[0], bBox[1], bBox[2], bBox[3], refContext.pdf.unitMatrix)
     if (node instanceof Symbol) {
       await node.apply(refContext)

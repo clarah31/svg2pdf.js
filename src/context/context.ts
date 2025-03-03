@@ -2,7 +2,7 @@ import { ReferencesHandler } from './referenceshandler'
 import { AttributeState } from './attributestate'
 import { TextMeasure } from './textmeasure'
 import { StyleSheets } from './stylesheets'
-import { jsPDF, Matrix } from 'jspdf'
+import { jsPDF, Matrix, PatternData } from 'jspdf'
 import { Viewport } from './viewport'
 
 /**
@@ -28,8 +28,11 @@ export class Context {
   textMeasure: TextMeasure
   transform: Matrix
   withinClipPath: boolean
+  withinMaskPath: boolean
   withinUse: boolean
-
+  inEffectNode: number
+  //AUIT
+  patternData:PatternData
   constructor(pdf: jsPDF, values: ContextOptions) {
     this.pdf = pdf
     this.svg2pdfParameters = values.svg2pdfParameters
@@ -43,7 +46,12 @@ export class Context {
     this.textMeasure = values.textMeasure
     this.transform = values.transform ?? this.pdf.unitMatrix
     this.withinClipPath = values.withinClipPath ?? false
+    this.withinMaskPath = values.withinMaskPath ?? false
     this.withinUse = values.withinUse ?? false
+    this.inEffectNode= values.inEffectNode ?? 0
+
+    //AUIT
+    this.patternData = values.patternData
   }
 
   clone(
@@ -52,7 +60,10 @@ export class Context {
       attributeState?: AttributeState
       transform?: Matrix
       withinClipPath?: boolean
+      withinMaskPath?: boolean
       withinUse?: boolean
+      inEffectNode?: number
+      patternData?:PatternData
     } = {}
   ): Context {
     return new Context(this.pdf, {
@@ -66,7 +77,10 @@ export class Context {
       textMeasure: this.textMeasure,
       transform: values.transform ?? this.transform,
       withinClipPath: values.withinClipPath ?? this.withinClipPath,
-      withinUse: values.withinUse ?? this.withinUse
+      withinMaskPath: values.withinMaskPath ?? this.withinMaskPath,
+      withinUse: values.withinUse ?? this.withinUse,
+      inEffectNode: values.inEffectNode ?? this.inEffectNode,
+      patternData: values.patternData ?? this.patternData,
     })
   }
 }
@@ -78,9 +92,13 @@ export interface ContextOptions {
   refsHandler: ReferencesHandler
   styleSheets: StyleSheets
   textMeasure: TextMeasure
+  patternData:PatternData
   transform?: Matrix
   withinClipPath?: boolean
   withinUse?: boolean
+  // AUIT
+  withinMaskPath?: boolean
+  inEffectNode?: number
 }
 
 export interface Svg2pdfParameters {

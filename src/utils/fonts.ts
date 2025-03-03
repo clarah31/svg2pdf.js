@@ -6,7 +6,6 @@
 //import { MKITFPdf } from 'ui/app/components/PdfBuilder/jspdf/MKITFPdf'
 import { AttributeState } from '../context/attributestate'
 import { Context } from '../context/context'
-import { jsPDF } from 'jspdf'
 
 export type FontFamily = string
 
@@ -29,43 +28,45 @@ export function findFirstAvailableFontFamily(
   fontFamilies: FontFamily[],
   context: Context
 ): FontFamily {
-  const fontType = combineFontStyleAndFontWeight(
-    attributeState.fontStyle,
-    attributeState.fontWeight
-  )
+  // const fontType = combineFontStyleAndFontWeight(
+  //   attributeState.fontStyle,
+  //   attributeState.fontWeight
+  // )
   //@ts-ignore
 //  const mkitPDF:MKITFPdf = context.pdf.__MKITFPdf; 
   // if (mkitPDF)
   //   return mkitPDF.findFirstAvailableFontFamily(attributeState,fontFamilies,context,fontType);
-  const availableFonts = context.pdf.getFontList()
-  let firstAvailable = ''
-  const fontIsAvailable = fontFamilies.some(font => {
-    const availableStyles = availableFonts[font]
-    if (availableStyles && availableStyles.indexOf(fontType) >= 0) {
-      firstAvailable = font
-      return true
-    }
+  //Dummy wird nicht benötigt
+  return 'Inter'
+  // const availableFonts = context.pdf.getFontList()
+  // let firstAvailable = ''
+  // const fontIsAvailable = fontFamilies.some(font => {
+  //   const availableStyles = availableFonts[font]
+  //   if (availableStyles && availableStyles.indexOf(fontType) >= 0) {
+  //     firstAvailable = font
+  //     return true
+  //   }
 
-    font = font.toLowerCase()
-    if (fontAliases.hasOwnProperty(font)) {
-      firstAvailable = font
-      return true
-    }
+  //   font = font.toLowerCase()
+  //   if (fontAliases.hasOwnProperty(font)) {
+  //     firstAvailable = font
+  //     return true
+  //   }
 
-    return false
-  })
+  //   return false
+  // })
 
-  if (!fontIsAvailable) {
-    firstAvailable = 'Inter'
-  }
+  // if (!fontIsAvailable) {
+  //   firstAvailable = 'Inter'
+  // }
 
-  return firstAvailable
+  // return firstAvailable
 }
 
 const isJsPDF23: boolean = (() => {
   return true;
-  const parts = jsPDF.version.split('.')
-  return parseFloat(parts[0]) === 2 && parseFloat(parts[1]) === 3
+  // const parts = jsPDF.version.split('.')
+  // return parseFloat(parts[0]) === 2 && parseFloat(parts[1]) === 3
 })()
 
 export function combineFontStyleAndFontWeight(

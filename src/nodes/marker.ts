@@ -23,7 +23,8 @@ export class MarkerNode extends NonRenderedNode {
       viewport: parentContext.viewport,
       svg2pdfParameters: parentContext.svg2pdfParameters,
       textMeasure: parentContext.textMeasure,
-      attributeState: Object.assign(AttributeState.default(), contextColors)
+      attributeState: Object.assign(AttributeState.default(), contextColors),
+      patternData:parentContext.patternData
     })
 
     // "Properties do not inherit from the element referencing the 'marker' into the contents of the

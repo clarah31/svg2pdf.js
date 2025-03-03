@@ -8,9 +8,9 @@ import { SvgNode } from './svgnode'
 import { GState, Matrix, ShadingPattern, ShadingPatternType } from 'jspdf'
 import { parseColor } from '../utils/parsing'
 import { StyleSheets } from '../context/stylesheets'
-
+//AUIT
 export abstract class Gradient extends NonRenderedNode {
-  private readonly pdfGradientType: ShadingPatternType
+  readonly pdfGradientType: ShadingPatternType
   private contextColor: RGBColor | null | undefined
   private stops: StopData[] | undefined
 
@@ -31,41 +31,25 @@ export abstract class Gradient extends NonRenderedNode {
     }
 
     const colors: StopData[] = this.getStops(context.styleSheets)
-    let opacitySum = 0
-    let hasOpacity = false
-    let gState
+    //AUIT
+    // let opacitySum = 0
+    // let hasOpacity = false
+    // let gState
 
-    colors.forEach(({ opacity }) => {
-      if (opacity && opacity !== 1) {
-        opacitySum += opacity
-        hasOpacity = true
-      }
-    })
+    // colors.forEach(({ opacity }) => {
+    //   if (opacity && opacity !== 1) {
+    //     opacitySum += opacity
+    //     hasOpacity = true
+    //   }
+    // })
 
-    if (hasOpacity) {
-      gState = new GState({ opacity: opacitySum / colors.length })
-    }
-
-   //  const pattern = new ShadingPattern(this.pdfGradientType, this.getCoordinates(), colors, gState)
-    // context.pdf.addShadingPattern(id, pattern)
-    console.log(colors)
-//AUIT
-debugger
-const colors2: StopData[] =[
-  {
-    offset: 0,
-    color: [255, 160, 169], //RGB as an array
-    opacity: 0
- },
- {
-    offset: 1,
-    color: [76, 160, 255],
-    opacity: 0.5
-  }
-]
-  const gstate = new GState({opacity: 0.75});
-  const pattern2 = new ShadingPattern(this.pdfGradientType, this.getCoordinates(),colors2,gstate)
-  context.pdf.addShadingPattern(id, pattern2)
+    // if (hasOpacity) {
+    //   gState = new GState({ opacity: opacitySum / colors.length })
+    // }
+    
+    // AUIT
+    //const pattern = new ShadingPattern(this.pdfGradientType, this.getCoordinates(), colors, gState)
+    context.pdf.addShadingPattern(id, this.pdfGradientType,colors,this.getCoordinates())
   }
   abstract getCoordinates(): number[]
 

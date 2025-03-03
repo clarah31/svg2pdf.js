@@ -1,5 +1,6 @@
 import { Matrix } from 'jspdf'
-//import { MKITjsPdf } from 'ui/app/components/PdfBuilder/jsPDF/MKITjsPdf'
+// import { MKITEffects } from 'PdfBuilder/jsPDF/MKITEffects'
+
 import { Context } from '../context/context'
 import { Rect } from '../utils/geometry'
 import { getAttribute } from '../utils/node'
@@ -14,6 +15,7 @@ export abstract class SvgNode {
     this.element = element
     this.children = children
     this.parent = null
+    
   // // @ts-ignore
   //  const mkitPdf:MKITjsPdf=  this.element.ownerDocument.__MKITjsPdf;
   //  if (mkitPdf && !mkitPdf.getEffectHandler().canViewHook(this.element)   ){

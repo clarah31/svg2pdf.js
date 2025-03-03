@@ -3,7 +3,6 @@ import { toPixels } from './utils/misc'
 import { getAttribute, nodeIs } from './utils/node'
 import { parseColor, parseFloats } from './utils/parsing'
 //import FontFamily from 'font-family-papandreou'
-import { GState } from 'jspdf'
 //import { MKITFPdf } from 'ui/app/components/PdfBuilder/jspdf/MKITFPdf'
 import { ColorFill } from './fill/ColorFill'
 import { parseFill } from './fill/parseFill'
@@ -11,12 +10,18 @@ import { SvgNode } from './nodes/svgnode'
 import {
   combineFontStyleAndFontWeight,
   findFirstAvailableFontFamily,
-  fontAliases
+  fontAliases,
 } from './utils/fonts'
 import { RGBColor } from './utils/rgbcolor'
 
 export function parseAttributes(context: Context, svgNode: SvgNode, node?: Element): void {
   const domNode = node || svgNode.element
+
+  // AUIT
+  const mixBlendMode = getAttribute(domNode, context.styleSheets, 'mix-blend-mode')
+  if (mixBlendMode) {
+    context.attributeState.mixBlendMode = mixBlendMode
+  }
   // update color first so currentColor becomes available for this node
   const color = getAttribute(domNode, context.styleSheets, 'color')
   if (color) {
@@ -68,7 +73,7 @@ export function parseAttributes(context: Context, svgNode: SvgNode, node?: Eleme
       const strokeRGB = parseColor(stroke, context.attributeState)
       if (strokeRGB.ok) {
         context.attributeState.stroke = new ColorFill(strokeRGB)
-      }
+      } else context.attributeState.stroke = parseFill(stroke, context) //AUIT
     }
   }
 
@@ -118,7 +123,7 @@ export function parseAttributes(context: Context, svgNode: SvgNode, node?: Eleme
 
   const fontFamily = getAttribute(domNode, context.styleSheets, 'font-family')
   if (fontFamily) {
-    const fontFamilies = [fontFamily];//FontFamily.parse(fontFamily) AUIT
+    const fontFamilies = [fontFamily] //FontFamily.parse(fontFamily) AUIT
     context.attributeState.fontFamily = findFirstAvailableFontFamily(
       context.attributeState,
       fontFamilies,
@@ -171,6 +176,13 @@ export function applyAttributes(
   ) {
     fillOpacity *= childContext.attributeState.fill.color.a
   }
+  if (
+    //AUIT
+    childContext.attributeState.fill instanceof ColorFill &&
+    typeof childContext.attributeState.fill.color.a === 'undefined'
+  ) {
+    childContext.attributeState.fill.color.a = fillOpacity
+  }
 
   strokeOpacity *= childContext.attributeState.strokeOpacity
   strokeOpacity *= childContext.attributeState.opacity
@@ -179,6 +191,13 @@ export function applyAttributes(
     typeof childContext.attributeState.stroke.color.a !== 'undefined'
   ) {
     strokeOpacity *= childContext.attributeState.stroke.color.a
+  }
+  if (
+    //AUIT
+    childContext.attributeState.stroke instanceof ColorFill &&
+    typeof childContext.attributeState.stroke.color.a === 'undefined'
+  ) {
+    childContext.attributeState.stroke.color.a = strokeOpacity
   }
 
   let hasFillOpacity = fillOpacity < 1.0
@@ -210,6 +229,8 @@ export function applyAttributes(
 
   if (hasFillOpacity || hasStrokeOpacity) {
     //AUIT
+    fillOpacity && childContext.pdf.doc.fillOpacity(fillOpacity)
+    hasStrokeOpacity && childContext.pdf.doc.strokeOpacity(strokeOpacity)
     // const gState: GState = {}
     // hasFillOpacity && (gState['opacity'] = fillOpacity)
     // hasStrokeOpacity && (gState['stroke-opacity'] = strokeOpacity)
@@ -227,7 +248,8 @@ export function applyAttributes(
     childContext.pdf.setFillColor(
       childContext.attributeState.fill.color.r,
       childContext.attributeState.fill.color.g,
-      childContext.attributeState.fill.color.b
+      childContext.attributeState.fill.color.b,
+      childContext.attributeState.fill.color.a // AUIT
     )
   }
 
@@ -242,7 +264,8 @@ export function applyAttributes(
     childContext.pdf.setDrawColor(
       childContext.attributeState.stroke.color.r,
       childContext.attributeState.stroke.color.g,
-      childContext.attributeState.stroke.color.b
+      childContext.attributeState.stroke.color.b,
+      childContext.attributeState.stroke.color.a //AUIT
     )
   }
 
@@ -288,7 +311,7 @@ export function applyAttributes(
     childContext.attributeState.fill.color.ok
   ) {
     const fillColor = childContext.attributeState.fill.color
-    childContext.pdf.setTextColor(fillColor.r, fillColor.g, fillColor.b)
+    childContext.pdf.setTextColor(fillColor.r, fillColor.g, fillColor.b, fillColor.a) //AUIT
   }
 
   let fontStyle: string | undefined
@@ -302,26 +325,57 @@ export function applyAttributes(
     )
   }
 
-    if (font !== undefined || fontStyle !== undefined) {
-      if (font === undefined) {
-        if (fontAliases.hasOwnProperty(childContext.attributeState.fontFamily)) {
-          font = fontAliases[childContext.attributeState.fontFamily]
-        } else {
-          font = childContext.attributeState.fontFamily
-        }
+  if (font !== undefined || fontStyle !== undefined) {
+    if (font === undefined) {
+      if (fontAliases.hasOwnProperty(childContext.attributeState.fontFamily)) {
+        font = fontAliases[childContext.attributeState.fontFamily]
+      } else {
+        font = childContext.attributeState.fontFamily
       }
-      // AUIT    
-      // @ts-ignore
-      // const mkitPdf:MKITFPdf=  childContext.pdf.__MKITFPdf;
-      // mkitPdf.setFontFromContext(font,fontStyle,childContext,node)    
-      // childContext.pdf.setFont(font, fontStyle)
     }
+    // AUIT
+    // @ts-ignore
+    // const mkitPdf:MKITFPdf=  childContext.pdf.__MKITFPdf;
+    // mkitPdf.setFontFromContext(font,fontStyle,childContext,node)
+    // childContext.pdf.setFont(font, fontStyle)
+  }
 
   if (childContext.attributeState.fontSize !== parentContext.attributeState.fontSize) {
     // correct for a jsPDF-instance measurement unit that differs from `pt`
     childContext.pdf.setFontSize(
       childContext.attributeState.fontSize * childContext.pdf.internal.scaleFactor
     )
+  }
+  // AUIT
+  if (childContext.attributeState.mixBlendMode) {
+    const transBlendMode: { [key: string]: string } = {
+      multiply: 'Multiply',
+      screen: 'Screen',
+      overlay: 'Overlay',
+      darken: 'Darken',
+      lighten: 'Lighten',
+      'color-dodge': 'ColorDodge',
+      'color-burn': 'ColorBurn',
+      'hard-light': 'HardLight',
+      'soft-light': 'SoftLight',
+      difference: 'Difference',
+      exclusion: 'Exclusion',
+      hue: 'Hue',
+      saturation: 'Saturation',
+    }
+    const blendMode = transBlendMode[childContext.attributeState.mixBlendMode.toLowerCase()]
+    if (blendMode) {
+      const doc = childContext.pdf.doc
+      //@ts-ignore
+      let name = 'M' + (doc._maskCount = (doc._maskCount || 0) + 1)
+      let gstate = doc.ref({
+        Type: 'ExtGState',
+        BM: blendMode,
+      })
+      gstate.end(undefined)
+      doc.page.ext_gstates[name] = gstate
+      doc.addContent('/' + name + ' gs')
+    }
   }
 }
 
@@ -364,10 +418,11 @@ export function applyContext(context: Context): void {
     pdf.setFillColor(
       attributeState.fill.color.r,
       attributeState.fill.color.g,
-      attributeState.fill.color.b
+      attributeState.fill.color.b,
+      attributeState.fill.color.a //AUIT
     )
   } else {
-    pdf.setFillColor(0, 0, 0)
+    pdf.setFillColor(0, 0, 0, 1) //AUIT
   }
 
   pdf.setLineWidth(attributeState.strokeWidth)
@@ -376,10 +431,11 @@ export function applyContext(context: Context): void {
     pdf.setDrawColor(
       attributeState.stroke.color.r,
       attributeState.stroke.color.g,
-      attributeState.stroke.color.b
+      attributeState.stroke.color.b,
+      attributeState.stroke.color.a //AUIT
     )
   } else {
-    pdf.setDrawColor(0, 0, 0)
+    pdf.setDrawColor(0, 0, 0, 1) //AUIT
   }
 
   pdf.setLineCap(attributeState.strokeLinecap)
@@ -406,39 +462,40 @@ export function applyContext(context: Context): void {
     attributeState.fill.color.ok
   ) {
     const fillColor = attributeState.fill.color
-    pdf.setTextColor(fillColor.r, fillColor.g, fillColor.b)
+    pdf.setTextColor(fillColor.r, fillColor.g, fillColor.b, fillColor.a) // AUIT
   } else {
-    pdf.setTextColor(0, 0, 0)
+    pdf.setTextColor(0, 0, 0, 1) //AUIT
   }
 
-  let fontStyle: string | undefined = ''
-  if (attributeState.fontWeight === 'bold') {
-    fontStyle = 'bold'
-  }
-  if (attributeState.fontStyle === 'italic') {
-    fontStyle += 'italic'
-  }
+  // AUIT
+  // let fontStyle: string | undefined = ''
+  // if (attributeState.fontWeight === 'bold') {
+  //   fontStyle = 'bold'
+  // }
+  // if (attributeState.fontStyle === 'italic') {
+  //   fontStyle += 'italic'
+  // }
 
-  if (fontStyle === '') {
-    fontStyle = 'normal'
-  }
+  // if (fontStyle === '') {
+  //   fontStyle = 'normal'
+  // }
   // @ts-ignore
   // const mkitPdf:MKITFPdf=  this.doc.__MKITFPdf;
   // mkitPdf.setFont(font,fontStyle)
   // AUIT
-  if (font !== undefined || fontStyle !== undefined) {
-    if (font === undefined) {
-      if (fontAliases.hasOwnProperty(attributeState.fontFamily)) {
-        font = fontAliases[attributeState.fontFamily]
-      } else {
-        font = attributeState.fontFamily
-      }
-    }
-    pdf.setFont(font, fontStyle)
-  } else {
-    pdf.setFont('helvetica', fontStyle)
-  }
+  // if (font !== undefined || fontStyle !== undefined) {
+  //   if (font === undefined) {
+  //     if (fontAliases.hasOwnProperty(attributeState.fontFamily)) {
+  //       font = fontAliases[attributeState.fontFamily]
+  //     } else {
+  //       font = attributeState.fontFamily
+  //     }
+  //   }
+  //   pdf.setFont(font, fontStyle)
+  // } else {
+  //   pdf.setFont('helvetica', fontStyle)
+  // }
 
-  // correct for a jsPDF-instance measurement unit that differs from `pt`
-  pdf.setFontSize(attributeState.fontSize * pdf.internal.scaleFactor)
+  // // correct for a jsPDF-instance measurement unit that differs from `pt`
+  // pdf.setFontSize(attributeState.fontSize * pdf.internal.scaleFactor)
 }

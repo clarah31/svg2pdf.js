@@ -22,7 +22,8 @@ export class GradientFill implements Fill {
           textMeasure: context.textMeasure,
           styleSheets: context.styleSheets,
           viewport: context.viewport,
-          svg2pdfParameters: context.svg2pdfParameters
+          svg2pdfParameters: context.svg2pdfParameters,
+          patternData:context.patternData
         })
       )
     )

@@ -13,8 +13,9 @@ export class Group extends ContainerNode {
     return context.pdf.unitMatrix
   }
   async render(parentContext: Context): Promise<void> {
-     const useEffect = MKITEffects.drawEffectNode(parentContext, this, false);
-//    console.log("Group:",this.element.id)
+    const useEffect = MKITEffects.drawEffectNode(parentContext, this, false)
+    //    console.log("Group:",this.element.id)
+//    await super.render(parentContext)
     if (useEffect !== 0) {
        const context = parentContext.clone()
       // context.inEffectNode=useEffect;
@@ -30,7 +31,6 @@ export class Group extends ContainerNode {
     await super.render(parentContext)
   }
   protected async renderCore(context: Context): Promise<void> {
-
     //draw alle children
     // MKITEffects.drawEffectNode(context,this,false)
     // const useEffect = MKITEffects.drawEffectNode(context, this, false);

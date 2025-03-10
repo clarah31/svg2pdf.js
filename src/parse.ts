@@ -42,10 +42,10 @@ export function parse(node: Element, idMap?: { [id: string]: SvgNode }): SvgNode
     case 'clippath':
       svgnode = new ClipPath(node, children)
       break
-      case 'mask':
+      // case 'mask':
         
-        svgnode = new MaskPath(node, children)
-        break
+      //   svgnode = new MaskPath(node, children)
+      //   break
       case 'ellipse':
       svgnode = new Ellipse(node, children)
       break

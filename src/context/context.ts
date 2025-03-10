@@ -29,6 +29,7 @@ export class Context {
   transform: Matrix
   withinClipPath: boolean
   withinMaskPath: boolean
+  withinMask: boolean
   withinUse: boolean
   inEffectNode: number
   //AUIT
@@ -47,6 +48,7 @@ export class Context {
     this.transform = values.transform ?? this.pdf.unitMatrix
     this.withinClipPath = values.withinClipPath ?? false
     this.withinMaskPath = values.withinMaskPath ?? false
+    this.withinMask= values.withinMask ?? false
     this.withinUse = values.withinUse ?? false
     this.inEffectNode= values.inEffectNode ?? 0
 
@@ -61,6 +63,7 @@ export class Context {
       transform?: Matrix
       withinClipPath?: boolean
       withinMaskPath?: boolean
+      withinMask?: boolean
       withinUse?: boolean
       inEffectNode?: number
       patternData?:PatternData
@@ -78,6 +81,7 @@ export class Context {
       transform: values.transform ?? this.transform,
       withinClipPath: values.withinClipPath ?? this.withinClipPath,
       withinMaskPath: values.withinMaskPath ?? this.withinMaskPath,
+      withinMask: values.withinMask ?? this.withinMask,
       withinUse: values.withinUse ?? this.withinUse,
       inEffectNode: values.inEffectNode ?? this.inEffectNode,
       patternData: values.patternData ?? this.patternData,
@@ -98,6 +102,7 @@ export interface ContextOptions {
   withinUse?: boolean
   // AUIT
   withinMaskPath?: boolean
+  withinMask?: boolean
   inEffectNode?: number
 }
 

@@ -24,17 +24,19 @@ export async function applyMaskPath(
 ): Promise<void> {
   const maskContext = context.clone()
 
-  // const bBox = targetNode.getBoundingBox(context)
-  // if (
-  //   maskPathNode.element.hasAttribute('maskUnits') &&
-  //   maskPathNode.element.getAttribute('maskUnits')!.toLowerCase() === 'objectboundingbox'
-  // ) {
-  //   maskContext.transform = context.pdf.matrixMult(
-  //     context.pdf.Matrix(bBox[2], 0, 0, bBox[3], bBox[0], bBox[1]),
-  //     context.transform
-  //   )
-  // }
-  await maskPathNode.apply(maskContext);
+   const mask = new MaskPath(maskPathNode.element, maskPathNode.children)
+  // mask.apply(context)
+  const bBox = maskPathNode.getBoundingBox(context)
+  if (
+    maskPathNode.element.hasAttribute('maskUnits') &&
+    maskPathNode.element.getAttribute('maskUnits')!.toLowerCase() === 'objectboundingbox'
+  ) {
+    maskContext.transform = context.pdf.matrixMult(
+      context.pdf.Matrix(bBox[2], 0, 0, bBox[3], bBox[0], bBox[1]),
+      context.transform
+    )
+  }
+  await mask.apply(maskContext);
 
   
 }

@@ -10,11 +10,20 @@ export class MaskPath extends NonRenderedNode {
     if (!this.isVisible(true, context)) {
       return
     }
-    const bBox: number[] = this.getBoundingBoxCore(context)
+    // const clipPathMatrix = context.pdf.matrixMult(
+    //   this.computeNodeTransform(context),
+    //   context.transform
+    // )
+
+    const pageW = context.pdf.internal.pageSize.getWidth()
+    const pageH = context.pdf.internal.pageSize.getHeight()
+
+    const bBox: number[] = [0, 0, pageW, pageH] //this.getBoundingBoxCore(context)
     context.pdf.beginFormObject(bBox[0], bBox[1], bBox[2], bBox[3], null)
 
     doc.save()
-    doc.addContent('1 0 0 1 0 0 cm')
+    if ( context.pdf.drawScale > 0 && context.pdf.drawScale <= 100)
+    doc.scale(context.pdf.drawScale / 100)
     for (const child of this.children) {
       await child.render(
         new Context(context.pdf, {
@@ -24,7 +33,7 @@ export class MaskPath extends NonRenderedNode {
           withinMaskPath: true,
           svg2pdfParameters: context.svg2pdfParameters,
           textMeasure: context.textMeasure,
-          patternData:context.patternData
+          patternData: context.patternData,
         })
       )
     }
@@ -48,13 +57,14 @@ export class MaskPath extends NonRenderedNode {
     const clip = true //Immer
     //@ts-ignore
     let name = 'M' + (doc._maskCount = (doc._maskCount || 0) + 1)
+
     let gstate = doc.ref({
       Type: 'ExtGState',
-       CA: 1,
-       ca: 1,
-       BM: 'Multiply',
+      CA: 1,
+      ca: 1,
+      BM: 'Normal', //Multiply',
       SMask: {
-        S: sMask, //'Luminosity',
+        S: sMask,
         G: group.xobj,
         BC: clip ? [0, 0, 0] : [1, 1, 1],
       },

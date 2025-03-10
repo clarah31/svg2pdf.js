@@ -11,7 +11,7 @@ export abstract class RenderedNode extends SvgNode {
     //  if (!this.isVisible(parentContext.attributeState.visibility !== 'hidden', parentContext)) {
     // //   return
     //  }
-      
+
     // if (this.element.nodeName !== 'text' && this.element.nodeName !== 'g') {
     //   if (parentContext.inEffectNode) {
     //     console.log('inEffectNode...', this.element.id)
@@ -25,10 +25,14 @@ export abstract class RenderedNode extends SvgNode {
     )
 
     // AUIT
-    if ( MKITEffects.inEffectNode(parentContext, this.element) ){
+    if (MKITEffects.inEffectNode(parentContext, this.element)) {
       //console.log('inEffectNode...', this.element.id)
-      await this.renderCore(context)
-      return;
+      const clipPathAttribute = getAttribute(this.element, context.styleSheets, 'clip-path')
+      let hasClipPath = clipPathAttribute && clipPathAttribute !== 'none'
+      if (!hasClipPath) {
+        return
+//        await this.renderCore(context)
+      }
     }
 
     parseAttributes(context, this)

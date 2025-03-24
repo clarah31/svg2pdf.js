@@ -23,19 +23,34 @@ export abstract class RenderedNode extends SvgNode {
       this.computeNodeTransform(context),
       parentContext.transform
     )
-
+    const hideNode = MKITEffects.inEffectNode(parentContext, this.element)
     // AUIT
-    if (MKITEffects.inEffectNode(parentContext, this.element)) {
-      //console.log('inEffectNode...', this.element.id)
-      const clipPathAttribute = getAttribute(this.element, context.styleSheets, 'clip-path')
-      let hasClipPath = clipPathAttribute && clipPathAttribute !== 'none'
-      if (!hasClipPath) {
-        return
-//        await this.renderCore(context)
-      }
-    }
+    // if (0)
+    //   if (MKITEffects.inEffectNode(parentContext, this.element)) {
+    //     //console.log('inEffectNode...', this.element.id)
+    //     const clipPathAttribute = getAttribute(this.element, context.styleSheets, 'clip-path')
+    //     let hasClipPath = clipPathAttribute && clipPathAttribute !== 'none'
+    //     if (!hasClipPath) {
+    //       return
+    //       //        await this.renderCore(context)
+    //     }
+    //   }
 
     parseAttributes(context, this)
+
+    const maskPathAttribute = getAttribute(this.element, context.styleSheets, 'mask')
+    const hasMaskPath = maskPathAttribute && maskPathAttribute !== 'none'
+    let maskNode = null
+    if (hasMaskPath) {
+      maskNode = getMaskPathNode(maskPathAttribute!, this, context)
+      if (!maskNode) {
+        return
+      }
+      if (!maskNode.isVisible(true, context)) {
+        maskNode = null
+      }
+      if (hideNode) return
+    }
 
     const clipPathAttribute = getAttribute(this.element, context.styleSheets, 'clip-path')
     let hasClipPath = clipPathAttribute && clipPathAttribute !== 'none'
@@ -54,33 +69,28 @@ export abstract class RenderedNode extends SvgNode {
       }
     }
     // AUIT mask
-    const maskPathAttribute = getAttribute(this.element, context.styleSheets, 'mask')
-    let hasMaskPath = maskPathAttribute && maskPathAttribute !== 'none'
-
-    if (hasMaskPath) {
-      const maskNode = getMaskPathNode(maskPathAttribute!, this, context)
-      if (maskNode) {
-        if (maskNode.isVisible(true, context)) {
-          context.pdf.saveGraphicsState()
-          await applyMaskPath(this, maskNode, context)
-        } else {
-          return
-        }
-      } else {
-        hasMaskPath = false
-      }
+    // const maskPathAttribute = getAttribute(this.element, context.styleSheets, 'mask')
+    // let hasMaskPath =  !hideNode && maskPathAttribute && maskPathAttribute !== 'none'
+    if (maskNode) {
+      context.pdf.saveGraphicsState()
+      await applyMaskPath(this, maskNode, context)
+      
     }
 
     if (!context.withinClipPath || !context.withinMaskPath) {
       context.pdf.saveGraphicsState()
     }
-    applyAttributes(context, parentContext, this.element)
+    if (!hideNode) applyAttributes(context, parentContext, this.element)
+   
     await this.renderCore(context)
     if (!context.withinClipPath || !context.withinMaskPath) {
       context.pdf.restoreGraphicsState()
     }
 
-    if (hasClipPath || hasMaskPath) {
+    if (hasClipPath ) {
+      context.pdf.restoreGraphicsState()
+    }
+    if (maskNode) {
       context.pdf.restoreGraphicsState()
     }
   }
